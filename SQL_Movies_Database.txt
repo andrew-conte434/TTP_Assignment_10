@@ -1,0 +1,181 @@
+postgres=# CREATE DATABASE moviesDatabase
+postgres-# ;
+CREATE DATABASE
+postgres=# \c moviesDatabase
+connection to server at "localhost" (::1), port 5432 failed: FATAL:  database "moviesDatabase" does not exist
+Previous connection kept
+postgres=# CREATE TABLE movie(movie_id int primary key, title varchar(30), genre varchar(30), runtime int, year int, lang varchar(30));
+CREATE TABLE
+postgres=# CREATE TABLE actors(actor_id int primary key, fname varchar(30), lname varchar(30), gender varchar, dob, varchar(10));
+ERROR:  syntax error at or near ","
+LINE 1: ...archar(30), lname varchar(30), gender varchar, dob, varchar(...
+                                                             ^
+postgres=# CREATE TABLE actors(actor_id int primary key, fname varchar(30), lname varchar(30), gender varchar, dob varchar(30));
+CREATE TABLE
+postgres=# CREATE TABLE directors(director_id int primary key, movie_id int, fname varchar(30), lname varchar(30));
+CREATE TABLE
+postgres=# CREATE TABLE reviewers(reviewer_id int primary key, fname varchar(30), lname varchar(30), publication varchar(30));
+CREATE TABLE
+postgres=# INSERT INTO movie(10001, 'Star Wars', 'Sci-Fi', 150, 1977, 'English'));
+ERROR:  syntax error at or near "10001"
+LINE 1: INSERT INTO movie(10001, 'Star Wars', 'Sci-Fi', 150, 1977, '...
+                          ^
+postgres=# INSERT INTO movie values(10001, 'Star Wars', 'Sci-Fi', 150, 1977, 'English');
+INSERT 0 1
+postgres=# INSERT INTO movie values(10002, 'The Avengers', 'Action', 120, 2012, 'English');
+INSERT 0 1
+postgres=# INSERT INTO movie values(10003, 'Spirited Away', 'Anime', 100, 2000, 'Japanese');
+INSERT 0 1
+postgres=# INSERT INTO movie values(10004, 'The Matrix', 'Action', 120, 1999, 'English');
+INSERT 0 1
+postgres=# INSERT INTO actors values(1, 'Mark', 'Hammil', 'm', '9/25/1951');
+INSERT 0 1
+postgres=# INSERT INTO actors values(2, 'Robert', 'Downey Jr', 'm', '4/4/1965');
+INSERT 0 1
+postgres=# INSERT INTO actors values(3, 'Scarlett', 'Johansson', 'f', '11/22/1984');
+INSERT 0 1
+postgres=# INSERT INTO actors values(4, 'Keanu', 'Reeves', 'm', '9/2/1964');
+INSERT 0 1
+postgres=# INSERT INTO directors values(1, 10001, 'George', 'Lucas');
+INSERT 0 1
+postgres=# INSERT INTO directors values(2, 10002, 'Joss', 'Whedon');
+INSERT 0 1
+postgres=# INSERT INTO directors values(3, 10003, 'Hayao', 'Miyazaki');
+INSERT 0 1
+postgres=# INSERT INTO directors values(4, 10004, 'Lana', 'Wichowski');
+INSERT 0 1
+postgres=# INSERT INTO reviewers(reviewer_id, fname, lname) values(1, 'Roger', 'Ebert')
+postgres-# ;
+INSERT 0 1
+postgres=# INSERT INTO reviewers values(2, 'Mike', 'Stoklasa', 'Red Letter Media');
+INSERT 0 1
+postgres=# INSERT INTO reviewers values(3, 'Manohla', 'Dargis', 'New York Times');
+INSERT 0 1
+postgres=# INSERT INTO reviewers(reviewer_id, 'Lindsay', 'Ellis');
+ERROR:  syntax error at or near "'Lindsay'"
+LINE 1: INSERT INTO reviewers(reviewer_id, 'Lindsay', 'Ellis');
+                                           ^
+postgres=# INSERT INTO reviewers(reviewer_id, fname, lname) values(4, 'Lindsay', 'Ellis');
+INSERT 0 1
+
+postgres=# SELECT * FROM movie
+postgres-# ;
+ movie_id |     title     | genre  | runtime | year |   lang
+----------+---------------+--------+---------+------+----------
+    10001 | Star Wars     | Sci-Fi |     150 | 1977 | English
+    10002 | The Avengers  | Action |     120 | 2012 | English
+    10003 | Spirited Away | Anime  |     100 | 2000 | Japanese
+    10004 | The Matrix    | Action |     120 | 1999 | English
+(4 rows)
+
+
+postgres=# SELECT * FROM actors;
+ actor_id |  fname   |   lname   | gender |    dob
+----------+----------+-----------+--------+------------
+        1 | Mark     | Hammil    | m      | 9/25/1951
+        2 | Robert   | Downey Jr | m      | 4/4/1965
+        3 | Scarlett | Johansson | f      | 11/22/1984
+        4 | Keanu    | Reeves    | m      | 9/2/1964
+(4 rows)
+
+
+postgres=# SELECT * FROM directors;
+ director_id | movie_id | fname  |   lname
+-------------+----------+--------+-----------
+           1 |    10001 | George | Lucas
+           2 |    10002 | Joss   | Whedon
+           3 |    10003 | Hayao  | Miyazaki
+           4 |    10004 | Lana   | Wichowski
+(4 rows)
+
+
+postgres=# SELECT * FROM reviewers;
+ reviewer_id |  fname  |  lname   |   publication
+-------------+---------+----------+------------------
+           1 | Roger   | Ebert    |
+           2 | Mike    | Stoklasa | Red Letter Media
+           3 | Manohla | Dargis   | New York Times
+           4 | Lindsay | Ellis    |
+(4 rows)
+
+postgres=# SELECT * FROM directors INNER JOIN movie ON directors.movie_id = movie.movie_id;
+ director_id | movie_id | fname  |   lname   | movie_id |     title     | genre  | runtime | year |   lang
+-------------+----------+--------+-----------+----------+---------------+--------+---------+------+----------
+           1 |    10001 | George | Lucas     |    10001 | Star Wars     | Sci-Fi |     150 | 1977 | English
+           2 |    10002 | Joss   | Whedon    |    10002 | The Avengers  | Action |     120 | 2012 | English
+           3 |    10003 | Hayao  | Miyazaki  |    10003 | Spirited Away | Anime  |     100 | 2000 | Japanese
+           4 |    10004 | Lana   | Wichowski |    10004 | The Matrix    | Action |     120 | 1999 | English
+(4 rows)
+
+postgres=# ALTER TABLE actors
+postgres-# ADD movie_id int;
+ALTER TABLE
+postgres=# SELECT * FROM actors;
+ actor_id |  fname   |   lname   | gender |    dob     | movie_id
+----------+----------+-----------+--------+------------+----------
+        1 | Mark     | Hammil    | m      | 9/25/1951  |
+        2 | Robert   | Downey Jr | m      | 4/4/1965   |
+        3 | Scarlett | Johansson | f      | 11/22/1984 |
+        4 | Keanu    | Reeves    | m      | 9/2/1964   |
+(4 rows)
+
+postgres=# UPDATE actors
+postgres-# SET movie_id = 10001
+postgres-# WHERE actor_id=1;
+UPDATE 1
+postgres=# SELECT * FROM actors
+postgres-# ;
+ actor_id |  fname   |   lname   | gender |    dob     | movie_id
+----------+----------+-----------+--------+------------+----------
+        2 | Robert   | Downey Jr | m      | 4/4/1965   |
+        3 | Scarlett | Johansson | f      | 11/22/1984 |
+        4 | Keanu    | Reeves    | m      | 9/2/1964   |
+        1 | Mark     | Hammil    | m      | 9/25/1951  |    10001
+(4 rows)
+
+
+postgres=# UPDATE actors
+postgres-# SET movie_id = 10002
+postgres-# WHERE actor_id = 2 OR 3;
+ERROR:  argument of OR must be type boolean, not type integer
+LINE 3: WHERE actor_id = 2 OR 3;
+                              ^
+postgres=# UPDATE actors
+postgres-# SELECT * FROM actors
+postgres-# ;
+ERROR:  syntax error at or near "SELECT"
+LINE 2: SELECT * FROM actors
+        ^
+postgres=# UPDATE actors
+postgres-# SET movie_id = 10002
+postgres-# WHERE actor_id BETWEEN 2 and 3;
+UPDATE 2
+postgres=# SELECT * FROM actors;
+ actor_id |  fname   |   lname   | gender |    dob     | movie_id
+----------+----------+-----------+--------+------------+----------
+        4 | Keanu    | Reeves    | m      | 9/2/1964   |
+        1 | Mark     | Hammil    | m      | 9/25/1951  |    10001
+        2 | Robert   | Downey Jr | m      | 4/4/1965   |    10002
+        3 | Scarlett | Johansson | f      | 11/22/1984 |    10002
+(4 rows)
+
+
+postgres=# UPDATE actors
+postgres-# SET movie_id = 10004
+postgres-# WHERE actor_id = 4;
+UPDATE 1
+postgres=# postgres=# SELECT * FROM directors INNER JOIN movie ON directors.movie_id = movie.movie_id 
+					      INNER JOIN actors ON actors.movie_id = movie.movie_id;
+
+postgres=# SELECT movie.movie_id, directors.lname, actors.lname, reviewers.lname
+postgres-# FROM (((movie
+postgres(# INNER JOIN directors ON movie.movie_id = directors.movie_id)
+postgres(# INNER JOIN actors ON movie.movie_id = actors.movie_id)
+postgres(# INNER JOIN reviewers ON movie.movie_id = reviewers.movie_id);
+ movie_id | lname | lname  |  lname
+----------+-------+--------+----------
+    10001 | Lucas | Hammil | Ellis
+    10001 | Lucas | Hammil | Dargis
+    10001 | Lucas | Hammil | Stoklasa
+    10001 | Lucas | Hammil | Ebert
+(4 rows)
