@@ -1,6 +1,6 @@
 # TTP_Assignment_10
 
-LINK TO FIGMA FILE: [https://www.figma.com/file/9uiwKmPrQXl9lkZ1bZoQCe/Database-Diagram-(Community)](url)
+[LINK TO FIGMA FILE:](https://www.figma.com/file/9uiwKmPrQXl9lkZ1bZoQCe/Database-Diagram-(Community))
 
 **Assignment:**
 Download and install PostgreSQL on your devices (for Mac users I recommend the app)
